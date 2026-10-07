@@ -23,7 +23,7 @@ using System.Windows.Threading;
 
 namespace DragonCodexBoot {
  public sealed class Config {
-  public Config() { AutoReplaceEntrypoints=true; ScanAllLocalDrives=true; }
+  public Config() { AutoReplaceEntrypoints=false; ScanAllLocalDrives=false; }
   public bool AutoReplaceEntrypoints { get; set; }
   public bool ScanAllLocalDrives { get; set; }
   public string DisplayName { get; set; }
