@@ -1,23 +1,24 @@
 # 启动入口替换与恢复
 
-下载版首次运行默认启动一次后台扫描。播放动画和打开客户端无需等待磁盘扫描结束。它针对 `launcher.json` 中配置的客户端；开发机的应用名显示为 ChatGPT，应用包标识是 OpenAI.Codex。
+下载版默认不会启动后台扫描，也不会替换任何快捷方式。只有用户主动启用 `AutoReplaceEntrypoints`，或手动运行整合命令时，才会扫描入口。播放动画和打开客户端本身不需要入口替换。它针对 `launcher.json` 中配置的客户端；开发机的应用名显示为 ChatGPT，应用包标识是 OpenAI.Codex。
 
 ## 操作
 
-1. 解压到长期保留的目录，双击 `DragonCodexBoot.exe`。程序播放动画，后台扫描和替换入口。
-2. 打开 `.integration/report.json` 查看替换、补建、跳过、权限错误和扫描超时。扫描最多 300 秒，下次播放不会自动重复扫描。
+1. 解压到长期保留的目录，双击 `DragonCodexBoot.exe`。默认只播放动画并打开真实客户端，不扫描或替换入口。
+2. 若要整合快捷方式，可先将 `launcher.json` 的 `AutoReplaceEntrypoints` 改为 `true`，或手动运行 `Rescan-Entrypoints.cmd`。执行后再打开 `.integration/report.json` 查看替换、补建、跳过、权限错误和扫描超时；扫描最多 300 秒。
 3. 新增了入口时运行 `Rescan-Entrypoints.cmd`。公共目录写入失败时可由自己选择以管理员身份运行这个文件。
 4. 删除、移动程序或不再使用之前，运行 `Restore-Original-Entrypoints.cmd`。它恢复备份，并阻止下次播放自动重装。已被用户改动或删除的快捷方式会保留，原因记录在报告中。
 
 恢复与重新扫描也可使用 `DragonCodexBoot.exe --restore-entrypoints` / `--integrate-entrypoints`，不播放视频。命令行执行会等待入口脚本完成；平常播放的扫描在后台进行。
 
-如果要完全关闭替换，在首次运行前设置：
+安全默认配置为：
 
 ```json
-"AutoReplaceEntrypoints": false
+"AutoReplaceEntrypoints": false,
+"ScanAllLocalDrives": false
 ```
 
-如果只想扫描常用入口，设置 `ScanAllLocalDrives: false`。已有替换不会因为关闭配置自动恢复，应先运行恢复文件。
+若要自动整合快捷方式，将 `AutoReplaceEntrypoints` 改为 `true`。保持 `ScanAllLocalDrives: false` 时只处理常用入口；只有明确需要扫描所有本地固定磁盘时，才将它改为 `true`。已有替换不会因为关闭配置自动恢复，应先运行恢复文件。
 
 ## 匹配与备份
 
@@ -40,7 +41,7 @@
 | 网页 ChatGPT、浏览器书签 | 不替换为本地 Codex 客户端 |
 | Windows、回收站、链接目录、运行时/缓存目录、启动器目录 | 跳过；不修改应用包 |
 
-因此这项功能是可恢复的快捷方式替换，不能声称所有启动路径都已接管。默认设置尽量覆盖本机可识别的入口，报告同时保留 `RegisteredApplicationChanged: false`、`StartPinsAutomaticallyChanged: false` 和 `TaskbarCacheRefreshVerified: false`。
+因此这项功能是可恢复的快捷方式替换，不能声称所有启动路径都已接管。启用扫描时会尽量覆盖指定范围内可识别的入口，报告同时保留 `RegisteredApplicationChanged: false`、`StartPinsAutomaticallyChanged: false` 和 `TaskbarCacheRefreshVerified: false`。
 
 ## 迁移与卸载
 
